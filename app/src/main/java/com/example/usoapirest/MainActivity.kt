@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity(), android.widget.SearchView.OnQueryTextListener {
 
-    lateinit var list_employee: List<Employee>
+    lateinit var list_employee: Employee
     lateinit var employeeAdapter: EmployeeAdapter
     lateinit var recycler_employees:RecyclerView
     lateinit var searchBreed:SearchView
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(), android.widget.SearchView.OnQueryTextL
         if(employees.status == "success"){
             list_employee = employees.data
         }
-        employeeAdapter = EmployeeAdapter(list_employee)
+        employeeAdapter = EmployeeAdapter(listOf(list_employee))
         recycler_employees.setHasFixedSize(true)
         recycler_employees.layoutManager = LinearLayoutManager(this)
         recycler_employees.adapter = employeeAdapter
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity(), android.widget.SearchView.OnQueryTextL
 
     private fun getRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://dummy.restapiexample.com/public/api/v1/employee/") //tiene que terminar con una barra
+            .baseUrl("https://dummy.restapiexample.com/public/api/v1/employee/") //tiene que terminar con una barra
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -53,9 +53,10 @@ class MainActivity : AppCompatActivity(), android.widget.SearchView.OnQueryTextL
 
         doAsync {
             //LINEA 56 esta fallando.
+
             val call = getRetrofit().create(APIService::class.java).getCharacterByName("$query").execute()
             val employees = call.body() as EmployeeResponse       //Body es para obtener solo el "cuerpo" o la info que nesecitamos nada mas. Se devuelve un objeto generico por lo que hay que hacer cast
-
+            System.out.println("************PRUEBA**")
             uiThread {
                 employees
                 if(employees.status == "success") {
